@@ -58,3 +58,74 @@ exports.updateProduct = async (req, res) => {
     return res.status(500).json({ Success: false, message: err.message });
   }
 };
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const productDeleted = await Product.findByIdAndDelete(productId);
+    if (!productDeleted) {
+      return res.status(400).json({ message: "Product deletion failed" });
+    }
+    return res.status(200).json({ message: "Product deletion successfull" });
+  } catch (err) {
+    return res.status(500).json({ Success: false, message: err.message });
+  }
+};
+
+exports.deleteProductByFilter = async (req, res) => {
+  try {
+    const qunatityNum = req.body.quantityNum;
+    const productDeleted = await Product.findOneAndDelete({
+      quantity: qunatityNum
+    }); // delete first obj matching this condition
+    // const productDeleted = await Product.deleteMany({quantity: 0}); // delete all objects matching this condition
+    // const productDeleted = req.body.quantityNum ?  await Product.findOneAndDelete({quantity: qunatityNum}):
+    // await Product.findOneAndDelete({price: {$lt: req.body.price}})
+    // const productDeleted = await Product.findOneAndDelete({quantity: qunatityNum, price: req.body.price })
+    if (!productDeleted) {
+      return res.status(400).json({ message: "Product deletion failed" });
+    }
+    return res.status(200).json({ message: "Product deletion successfull" });
+  } catch (err) {
+    return res.status(500).json({ Success: false, message: err.message });
+  }
+};
+
+exports.getProductByID = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(400).json({ message: "Error getting Product" });
+    }
+    const { name, description, price } = product;
+    return res.status(200).json({
+      productData: { name, description, price },
+      message: "Fetched Product successfully"
+    });
+  } catch (err) {
+    return res.status(500).json({ Success: false, message: err.message });
+  }
+};
+
+exports.getProductByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const products = await Product.find({ bought_by: userId });
+    if (!products) {
+      return res.status(400).json({ message: "Error getting Products" });
+    }
+
+    const updatedArr = products.map((product) => {
+      const { name, description, price, bought_by } = product;
+      return { name, description, price, bought_by: bought_by };
+    });
+
+    return res.status(200).json({
+      productData: updatedArr,
+      message: "Fetched Products successfully"
+    });
+  } catch (err) {
+    return res.status(500).json({ Success: false, message: err.message });
+  }
+};
