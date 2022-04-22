@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const User = require("../models/User");
 
 exports.createProduct = async (req, res) => {
   try {
@@ -6,13 +7,12 @@ exports.createProduct = async (req, res) => {
     if (product) {
       return res.status(400).json({ message: "Product already exists" });
     }
-    const { name, quantity, description, price, bought_by } = req.body;
+    const { name, quantity, description, price } = req.body;
     const productCreated = await Product.create({
       name: name,
       description: description,
       quantity: quantity,
-      price: price,
-      bought_by: bought_by
+      price: price
     });
 
     if (!productCreated) {
@@ -42,13 +42,12 @@ exports.getProducts = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const { name, quantity, description, price, bought_by } = req.body;
+    const { name, quantity, description, price } = req.body;
     const productUpdated = await Product.findByIdAndUpdate(productId, {
       name: name,
       description: description,
       quantity: quantity,
-      price: price,
-      bought_by: bought_by
+      price: price
     });
     if (!productUpdated) {
       return res.status(400).json({ message: "Product updation failed" });
@@ -125,6 +124,33 @@ exports.getProductByUserId = async (req, res) => {
       productData: updatedArr,
       message: "Fetched Products successfully"
     });
+  } catch (err) {
+    return res.status(500).json({ Success: false, message: err.message });
+  }
+};
+
+exports.productBought = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productID = req.params.productId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: "Invalid user" });
+    }
+    const updatedProduct = await Product.findByIdAndUpdate(productID, {
+      $push: { bought_by: userId }
+    });
+    if (!updatedProduct) {
+      return res.status(400).json({ message: "Product updation failed" });
+    }
+    const product = await Product.findById(productID);
+    return res
+      .status(200)
+      .json({
+        product: product,
+        message: "Product updated successfully"
+      });
   } catch (err) {
     return res.status(500).json({ Success: false, message: err.message });
   }

@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
+app.set('secretKey', "nodeApp")
 
 app.listen(port, () => {
   console.log(`server running successfully on port:${port}`);

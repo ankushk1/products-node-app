@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema(
       required: true
     },
     bought_by: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User"
     }
   },
