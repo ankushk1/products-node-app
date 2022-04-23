@@ -12,7 +12,8 @@ exports.createProduct = async (req, res) => {
       name: name,
       description: description,
       quantity: quantity,
-      price: price
+      price: price,
+      created_by: req.body.user
     });
 
     if (!productCreated) {
@@ -47,7 +48,8 @@ exports.updateProduct = async (req, res) => {
       name: name,
       description: description,
       quantity: quantity,
-      price: price
+      price: price,
+      updated_by: req.body.user
     });
     if (!productUpdated) {
       return res.status(400).json({ message: "Product updation failed" });
@@ -109,7 +111,7 @@ exports.getProductByID = async (req, res) => {
 
 exports.getProductByUserId = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId =  req.body.user
     const products = await Product.find({ bought_by: userId });
     if (!products) {
       return res.status(400).json({ message: "Error getting Products" });
@@ -131,7 +133,7 @@ exports.getProductByUserId = async (req, res) => {
 
 exports.productBought = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId =  req.body.user;
     const productID = req.params.productId;
 
     const user = await User.findById(userId);

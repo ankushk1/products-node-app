@@ -21,6 +21,14 @@ const productSchema = new mongoose.Schema(
     bought_by: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User"
+    },
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+    updated_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
     }
   },
   { timestamps: true }

@@ -10,14 +10,15 @@ const {
   getProductByUserId,
   productBought
 } = require("../controllers/productsController");
+const { validateUser } = require("../middleware/jwt");
 
-router.post("/createProduct", createProduct);
+router.post("/createProduct", validateUser, createProduct);
 router.get("/getProducts", getProducts);
-router.put("/updateProduct/:id", updateProduct);
-router.delete("/deleteProduct/:id", deleteProduct);
-router.delete("/deleteProductByFilter", deleteProductByFilter);
+router.put("/updateProduct/:id", validateUser, updateProduct);
+router.delete("/deleteProduct/:id", validateUser,  deleteProduct);
+router.delete("/deleteProductByFilter", validateUser,  deleteProductByFilter);
 router.get("/getProductByID/:id", getProductByID);
-router.get("/getProductByUserId/:userId", getProductByUserId)
-router.put("/productBought/:userId/:productId", productBought)
+router.get("/getProductByUserId/", validateUser,  getProductByUserId);
+router.put("/productBought/:productId", validateUser, productBought);
 
 module.exports = router;
