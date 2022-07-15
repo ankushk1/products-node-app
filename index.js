@@ -5,7 +5,11 @@ const bodyParser = require("body-parser");
 const db = require("./config/mongoose");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
-
+var cors = require('cors')
+var corsOptions = {
+  origin: '*'
+}
+app.use(cors(corsOptions))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/users", userRoutes);

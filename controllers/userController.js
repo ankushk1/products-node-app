@@ -34,7 +34,7 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
   try {
-    let user = await User.findOne({ email: req.body.email });
+    let user = await User.findOne({ email: req.body.email }).lean();
 
     if (!user) {
       return res.status(400).json({ message: "Invalid user/ Sign up first" });
@@ -42,13 +42,14 @@ exports.signin = async (req, res) => {
     if (!bcrypt.compareSync(req.body.password, user.password)) {
       return res.status(400).json({ message: "Invalid password" });
     }
-    const { _id, email } = user;
+  
+    const { _id, email, role } = user;
     const token = jwt.sign({ _id, email }, req.app.get('secretKey'),{
       expiresIn : '2h'
     })
     return res
       .status(200)
-      .json({ user: { _id, email }, token: token ,message: "Login successfull" });
+      .json({ user: { _id, email, role }, token: token  ,message: "Login successfull" });
   } catch (err) {
     return res.status(500).json({ Success: false, message: err.message });
   }
